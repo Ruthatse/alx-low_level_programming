@@ -1,8 +1,8 @@
 #include "main.h"
 
 /**
- * main - prints Putchar
- * Return: Always 0
+ * main - Entry point
+ * Return: Always 1 (Success)
  */
 int main(void)
 {
@@ -17,5 +17,4 @@ int main(void)
 	_putchar('\n');
 
 	return (0);
-
 }
