@@ -14,7 +14,6 @@ int main(void)
         i = 0;
 
         while (i < 10)
-	/* Infinite loop, there is not increment for i */
         {
                 putchar(i);
         }
