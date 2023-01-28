@@ -1,94 +1,91 @@
 #include "search_algos.h"
 
-int binary_search(int *array, size_t size, int value);
-int recurse_helper(int *array, size_t left, size_t right, int value);
+/**
+ * print_array - Prints the contents of an array.
+ * @array: The source of the array to print.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
+ */
+void print_array(int *array, size_t l, size_t r)
+{
+	size_t i;
+
+	if (array)
+	{
+		printf("Searching in array: ");
+		for (i = l; i < l + (r - l + 1); i++)
+			printf("%d%s", *(array + i), i < l + (r - l) ? ", " : "\n");
+	}
+}
 
 /**
- * exponential_search - search array
- * @array: array to search
- * @size: size of array
- * @value: search value
+ * binary_search_index1 - Searches a value in a sorted array using \
+ * a binary search.
+ * @array: The array to search in.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
+ * @value: The value to look for.
  *
- * Return: index of matched value; -1 if not found
+ * Return: The first index of the value in the array, otherwise -1.
+ */
+int binary_search_index1(int *array, size_t l, size_t r, int value)
+{
+	size_t m;
+
+	if (!array)
+		return (-1);
+	print_array(array, l, r);
+	m = l + ((r - l) / 2);
+	if (l == r)
+		return (*(array + m) == value ? (int)m : -1);
+	if (value < *(array + m))
+	{
+		return (binary_search_index1(array, l, m - 1, value));
+	}
+	else if (value == *(array + m))
+	{
+		return ((int)m);
+	}
+	else
+	{
+		return (binary_search_index1(array, m + 1, r, value));
+	}
+}
+
+/**
+ * exponential_search - Searches a value in a sorted array using \
+ * an exponential search.
+ * @array: The array to search in.
+ * @size: The length of the array.
+ * @value: The value to look for.
+ *
+ * Return: The index of the value in the array, otherwise -1.
  */
 int exponential_search(int *array, size_t size, int value)
 {
-	size_t right = 1, left;
+	size_t low = 1, high = 2;
 
-	if (array == NULL)
+	if (!array || !size)
 		return (-1);
-
-	while (right < size && array[right] < value)
+	if (size < 2)
 	{
-		printf("Value checked array[%lu] = [%d]\n", right, array[right]);
-		right *= 2;
-	}
-
-	if (array[right] == value)
-		return (right);
-
-	left = right / 2; /* establish left bound */
-
-	if (right >= size) /* if right is out of bounds */
-		right = size - 1;
-
-	printf("Value found between indexes [%lu] and [%lu]\n", left, right);
-
-	return (recurse_helper(array, left, right, value));
-}
-
-/**
- * binary_search - search for value in array of sorted ints
- * @array: array to search
- * @size: size of array
- * @value: value to search
- *
- * Return: index of found value; or -1 if not found
- */
-int binary_search(int *array, size_t size, int value)
-{
-	if (array == NULL)
-		return (-1);
-
-	return (recurse_helper(array, 0, size - 1, value));
-}
-
-/**
- * recurse_helper - recursive implement of binary search
- * @array: array to search
- * @left: leftmost index
- * @right: rightmost index
- * @value: value to search
- *
- * Return: index of found value; or -1 if not found
- */
-int recurse_helper(int *array, size_t left, size_t right, int value)
-{
-	size_t i = left, mid;
-
-	if (left > right)
-		return (-1);
-
-	/* print search progress */
-	printf("Searching in array: %d", array[i++]);
-	while (i <= right)
-		printf(", %d", array[i++]);
-	printf("\n");
-
-	/* calculate mid */
-	mid = left + ((right - left) / 2);
-
-	/* check if mid is value */
-	if (array[mid] == value)
-		return (mid);
-	else if (array[mid] > value)
-	{
-		if (mid != 0)
-			return (recurse_helper(array, left, mid - 1, value));
-		else
-			return (-1);
+		low = 0;
+		high = 1;
 	}
 	else
-		return (recurse_helper(array, mid + 1, right, value));
+	{
+		while (low < size)
+		{
+			printf("Value checked array[%lu] = [%d]\n", low, array[low]);
+			if (
+				((array[low] <= value) && (array[high] >= value))
+				|| ((low * 2) >= size)
+				)
+				break;
+			low *= 2;
+			high = high * 2 < size ? high * 2 : size - 1;
+		}
+	}
+	printf("Value found between indexes [%lu] and [%lu]\n", low, high);
+	return (binary_search_index1(array, low, high, value));
 }
-
